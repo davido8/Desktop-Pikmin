@@ -240,7 +240,7 @@ void Onion::doFrame()
                 seed->doFrame();
             }
 
-            // clearSeeds();
+            clearSeeds();
             break;
         default:
             exit(EXIT_FAILURE);

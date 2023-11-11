@@ -59,7 +59,7 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
         }
 
         // Attach a renderer to the window.
-        Uint32 rflags = SDL_RENDERER_SOFTWARE | SDL_RENDERER_PRESENTVSYNC;
+        Uint32 rflags = SDL_RENDERER_PRESENTVSYNC;
         *renderer = SDL_CreateRenderer(*window, -1, rflags);
         if (!*renderer) {
             printf("Error opening renderer: %s", SDL_GetError());
@@ -86,19 +86,10 @@ int main(int argc, char *argv[])
     SDL_GetWindowSize(window, &screenWidth, &screenHeight);
     srand((unsigned) time(0));
 
-    // Check if Vsync is enabled
-    // int vsyncEnabled = SDL_GetHintBoolean(SDL_HINT_RENDER_VSYNC, SDL_FALSE);
-    
-    // if (vsyncEnabled) {
-    //     printf("Vsync is enabled.\n");
-    // } else {
-    //     printf("Vsync is not enabled.\n");
-    // }
-
     Seed::initializeTextures(window, renderer);
     Onion *onion = new Onion(window, renderer);
 
-    const int targetFPS = 30;
+    const int targetFPS = 60;
     const Uint32 frameDelay = 1000 / targetFPS;
     Uint32 frameStart, frameTime;
 
@@ -122,13 +113,12 @@ int main(int argc, char *argv[])
 
         onion->doFrame();
 
+        // Add delay to meet target frame rate.
         frameTime = SDL_GetTicks64() - frameStart;
         if (frameTime < frameDelay) {
             SDL_Delay(frameDelay - frameTime);
         }
-
         frames++;
-
 
         // Calculate the time elapsed
         Uint32 currentTime = SDL_GetTicks();
