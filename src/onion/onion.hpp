@@ -24,7 +24,6 @@ class Onion
         int w, h;                   /* Width and height of Onion. */
         int scale;
         enum OnionState state;
-        Uint64 tick;
 
         int noSeeds;                /* Number of seeds currently in the onion. */
         std::list<Seed *> seeds;  /* Current seeds in onion. */
@@ -37,6 +36,7 @@ class Onion
         void updatePosition();
         void extendLegs();
         void updateSeeds();
+        void createPikmin(int x, int y);
 
         void clearSeeds();
 

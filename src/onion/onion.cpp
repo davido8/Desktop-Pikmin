@@ -9,6 +9,8 @@
 #include "seed.hpp"
 #include <assert.h>
 
+#include <windows.h>
+
 #include "spritesheet/spritesheet.hpp"
 
 const char *onionImg = "sprites/onion_sheet.png";
@@ -19,6 +21,8 @@ const char *seedJson = "sprites/seed_data.json";
 
 extern int screenWidth;
 extern int screenHeight;
+
+Uint64 tick;
 
 
 /*  Initializes data structures for the Onion. This includes the Onion struct
@@ -52,14 +56,52 @@ Onion::Onion(SDL_Window *window, SDL_Renderer *renderer)
     std::cout << "Onion launching to (" << finalX << ", " << finalY << ")!\n";
 }
 
+void Onion::createPikmin(int x, int y)
+{
+    char buffer[100] = {0};  // Allocate a buffer to store the formatted string
+
+    // Format the string and store it in the buffer
+    sprintf(
+        buffer, 
+        "%s %d %d", 
+        "C:\\Users\\david\\Projects\\PikminVirus\\build\\pikmin.exe",
+        x, 
+        y
+    );
+
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+
+    ZeroMemory( &si, sizeof(si) );
+    si.cb = sizeof(si);
+    ZeroMemory( &pi, sizeof(pi) );
+
+    // Start the child process. 
+    if(!CreateProcess(
+        NULL,           // No module name (use command line)
+        buffer,        // Command line
+        NULL,           // Process handle not inheritable
+        NULL,           // Thread handle not inheritable
+        FALSE,          // Set handle inheritance to FALSE
+        0,              // No creation flags
+        NULL,           // Use parent's environment block
+        NULL,           // Use parent's starting directory 
+        &si,            // Pointer to STARTUPINFO structure
+        &pi)            // Pointer to PROCESS_INFORMATION structure
+    ) 
+    {
+        printf( "CreateProcess failed (%ld).\n", GetLastError() );
+        return;
+    } 
+}
+
 /* Creates a new seed in the Onion and launches it. Must be landed. */
 void Onion::launchSeed()
 {
     if (state == Landed)
     {
-        noSeeds++;
         seeds.push_back(new Seed(this, seedSprites));
-        std::cout << noSeeds << " seeds in onion\n";
+        std::cout << seeds.size() << " seeds in onion\n";
     }
 }
 
@@ -113,17 +155,32 @@ void Onion::updateSeeds()
     // Draw onion to the screen.
     sprites->drawSprite(x, y, scale);
 
-    // Update each seed.
-    for (Seed *seed: seeds)
-    {
-        seed->doFrame();
+    // Advance the seed's frame in here to make sure it doesn't happen once
+    // per seed.
+    if (tick % 6 == 0) {
+        seedSprites->nextSprite(true);
     }
+
+    std::list<Seed *>::iterator it = seeds.begin(); 
+  
+    while (it != seeds.end()) { 
+        Seed *seed = *it;
+        seed->doFrame();
+        if (seed->getState() == Bloomed) { 
+            createPikmin(seed->getX(), seed->getY());
+            it = seeds.erase(it); 
+            delete seed;
+            continue; 
+        } 
+        it++; 
+    } 
+  
 }
 
 void Onion::doFrame()
 {
     SDL_RenderClear(renderer);
-    this->tick++;
+    tick++;
     switch (state)
     {
         case Launching:

@@ -37,7 +37,7 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
     int success = 0;
 
     // Initialize all subsystems we need.
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         printf("Error initializing SDL: %s", SDL_GetError());
         success = -1;
     }
@@ -59,16 +59,19 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
         }
 
         // Attach a renderer to the window.
-        Uint32 rflags = SDL_RENDERER_PRESENTVSYNC;
+        Uint32 rflags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
         *renderer = SDL_CreateRenderer(*window, -1, rflags);
         if (!*renderer) {
             printf("Error opening renderer: %s", SDL_GetError());
             success = -1;
         }
 
+        SDL_SetRenderDrawBlendMode(*renderer, SDL_BLENDMODE_NONE);
+        SDL_SetRenderDrawColor(*renderer, 255, 255, 254, 255);
+
         // All parts of window not filled with a color will be transparent.
         if (MAKE_TRANSPARENT) {
-            MakeWindowTransparent(*window, RGB(255, 255, 255));
+            MakeWindowTransparent(*window, RGB(255, 255, 254));
         }
     }
 
@@ -86,7 +89,15 @@ int main(int argc, char *argv[])
     SDL_GetWindowSize(window, &screenWidth, &screenHeight);
     srand((unsigned) time(0));
 
-    Pikmin *pikmin = new Pikmin(window, renderer);
+    int x = 500;
+    int y = 500;
+    // Extract starting coordinates if supplied.
+    if (argc == 3) {
+        x = atoi(argv[1]);
+        y = atoi(argv[2]);
+    }
+
+    Pikmin *pikmin = new Pikmin(window, renderer, x, y);
 
     const int targetFPS = 60;
     const Uint32 frameDelay = 1000 / targetFPS;
@@ -102,6 +113,9 @@ int main(int argc, char *argv[])
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 quit = SDL_TRUE;
+            }
+            else if (e.type == SDL_KEYDOWN) {
+                // pikmin->doFrame();
             }
         }
 

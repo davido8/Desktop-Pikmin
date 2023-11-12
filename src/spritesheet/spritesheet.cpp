@@ -123,3 +123,4 @@ bool SpriteSheet::setCurrent(int frame)
 int SpriteSheet::getSpriteCount() { return spriteCount; }
 int SpriteSheet::getWidth() { return width; }
 int SpriteSheet::getHeight() { return height; }
+int SpriteSheet::getCurrentSprite() { return currentSprite; }

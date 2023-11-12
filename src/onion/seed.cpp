@@ -11,6 +11,8 @@
 
 #include "spritesheet/spritesheet.hpp"
 
+extern Uint64 tick;
+
 /* 
     Seed(): Constructor for the Seed class that places a seed into the flying
             state and chooses a final spot it will fly to.
@@ -76,7 +78,6 @@ void Seed::doFrame()
 {
     bool draw = true;
     bool freeze = false;
-    tick++;
     switch (state)
     {
         case Flying:
@@ -103,11 +104,11 @@ void Seed::doFrame()
     /* Only draw if necessary. */
     if (draw) {
         /* Only advance frame every couple of ticks to prevent it going fast. */
-        if (tick % 3 == 0) {
-            sprites->nextSprite(true);
-        }
+
         sprites->drawSprite(x, y, 5);
     }
 }
 
 enum SeedState Seed::getState() { return state; }
+int Seed::getX() { return x; }
+int Seed::getY() { return y; }

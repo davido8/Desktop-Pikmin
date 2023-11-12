@@ -4,18 +4,41 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include "spritesheet/spritesheet.hpp"
+
+enum Direction {
+    Up, Down, Left, Right, DCount
+};
+
+enum PikminState {
+    Idle, Resting, Meander, Count
+};
+
 class Pikmin 
 {
-    int x, y;                   /* (x, y) coordinate on screen. */
-    int finalX, finalY;         /* (x, y) coordinate once landed. */
-    int w, h;                   /* Width and height of Onion. */
+    private:
+        int x, y;                   /* (x, y) coordinate on screen. */
+        int w, h;         
+        int speed;
+        int scale;
+        Uint64 endActionTime;
 
-    SDL_Window *window;
-    SDL_Texture *sprite;
-    SDL_Renderer *renderer;
+        enum PikminState state;   
+
+        // Variables needed for walking.
+        int baseFrame;
+        enum Direction direction;       
+
+        SDL_Window *window;
+        SDL_Renderer *renderer;
+        SpriteSheet *sprites;
+
+        void selectAction();
+        void nappyTime();
+        void handleWalking();
 
     public:
-        Pikmin(SDL_Window *window, SDL_Renderer *renderer);
+        Pikmin(SDL_Window *window, SDL_Renderer *renderer, int x, int y);
 
         void doFrame();
 };

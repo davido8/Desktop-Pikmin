@@ -31,6 +31,7 @@ class SpriteSheet {
         int getSpriteCount();
         int getWidth();
         int getHeight();
+        int getCurrentSprite();
 };
 
 #endif

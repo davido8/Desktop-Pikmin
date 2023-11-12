@@ -33,6 +33,8 @@ class Seed {
         Seed(Onion *onion, SpriteSheet *sheet);
         void doFrame();
         enum SeedState getState();
+        int getX();
+        int getY();
 };
 
 #endif
