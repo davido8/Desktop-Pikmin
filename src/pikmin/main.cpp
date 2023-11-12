@@ -100,8 +100,7 @@ int main(int argc, char *argv[])
     while (!quit) {
         frameStart = SDL_GetTicks64();
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) 
-            {
+            if (e.type == SDL_QUIT) {
                 quit = SDL_TRUE;
             }
         }

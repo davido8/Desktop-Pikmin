@@ -59,12 +59,15 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
         }
 
         // Attach a renderer to the window.
-        Uint32 rflags = SDL_RENDERER_PRESENTVSYNC;
+        Uint32 rflags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
         *renderer = SDL_CreateRenderer(*window, -1, rflags);
         if (!*renderer) {
             printf("Error opening renderer: %s", SDL_GetError());
             success = -1;
         }
+
+        SDL_SetRenderDrawBlendMode(*renderer, SDL_BLENDMODE_NONE);
+        SDL_SetRenderDrawColor(*renderer, 255, 255, 255, 255);
 
         // All parts of window not filled with a color will be transparent.
         if (MAKE_TRANSPARENT) {

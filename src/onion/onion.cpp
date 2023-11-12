@@ -8,6 +8,11 @@
 #include "onion.hpp"
 #include <assert.h>
 
+#include "spritesheet/spritesheet.hpp"
+
+const char *onionImg = "sprites/onion_sheet.png";
+const char *onionJson = "sprites/onion_data.json";
+
 extern int screenWidth;
 extern int screenHeight;
 
@@ -151,11 +156,7 @@ Onion::Onion(SDL_Window *window, SDL_Renderer *renderer)
     h = 0.15 * screenHeight;
 
     // Load the texture for the Onion.
-    sprite = loadTexture(window, renderer, onionIMG);
-    if (SDL_RenderCopy(renderer, sprite, NULL, NULL) != 0) {
-        printf("Error: Could not load onion sprite.\n");
-        exit(EXIT_FAILURE);
-    }
+    sprites = new SpriteSheet(window, renderer, onionImg, onionJson);
 
     this->window = window;
     this->renderer = renderer;
@@ -208,7 +209,7 @@ void Onion::clearSeeds()
 void Onion::doFrame()
 {
     SDL_RenderClear(renderer);
-    SDL_Rect dest = {x, y, w, h};
+    this->tick++;
     switch (state)
     {
         case Launching:
@@ -216,7 +217,7 @@ void Onion::doFrame()
             if (y < finalY)
             {
                 // Draw onion to the screen.
-                SDL_RenderCopy(renderer, sprite, nullptr, &dest);
+                sprites->drawSprite(x, y, 2);
                 y = (y + onionSpeed) > finalY ? finalY : onionSpeed + y;
             }
             else 
@@ -225,14 +226,26 @@ void Onion::doFrame()
                 SDL_assert(x == finalX);
                 SDL_assert(y == finalY);
 
-                // Create the first seed in the Onion.
-                state = Landed;
-                launchSeed();
+                sprites->drawSprite(x, y, 2);
+                state = Unfolding;
             }
             break;
+        case Unfolding: {
+            bool incremented = false;
+            if (true) {
+                incremented = sprites->nextSprite();
+            }
+
+            sprites->drawSprite(x, y, 2);
+
+            if (!incremented) {
+                state = Landed;
+            }
+            break;
+        }
         case Landed:
             // Draw onion to the screen.
-            SDL_RenderCopy(renderer, sprite, nullptr, &dest);
+            sprites->drawSprite(x, y, 2);
 
             // Update each seed.
             for (Seed *seed: seeds)
@@ -240,7 +253,6 @@ void Onion::doFrame()
                 seed->doFrame();
             }
 
-            clearSeeds();
             break;
         default:
             exit(EXIT_FAILURE);
