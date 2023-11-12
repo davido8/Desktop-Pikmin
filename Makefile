@@ -3,7 +3,7 @@ CFLAGS=-Wall
 
 HEADERS=-Isrc/include/SDL2 -Isrc/include/json
 SDL2_FLAG=-Lsrc/lib
-SDL2_LIBS=-lmingw32 -lSDL2main -lSDL2_image -lSDL2
+SDL2_LIBS=-lmingw32 -lSDL2main -lSDL2_image -lSDL2 -lSDL2_mixer
 
 # Build targets.
 ONION=build/onion.exe
@@ -12,7 +12,7 @@ PIKMIN=build/pikmin.exe
 SRC_DIRS=src/onion src/pikmin src/spritesheet
 BUILD_DIRS=build\onion build\pikmin build\spritesheet
 
-ONION_OBJ := build/onion/onion.o build/onion/main.o build/spritesheet/spritesheet.o
+ONION_OBJ := build/onion/onion.o build/onion/main.o build/onion/seed.o build/spritesheet/spritesheet.o
 # ONION_OBJ=build/onion/onion.o build/onion/main.o build/spritesheet/spritesheet.cpp
 # PIKMIN_OBJ=build/pikmin/pikmin.o build/pikmin/main.o
 

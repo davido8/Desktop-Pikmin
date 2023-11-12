@@ -8,6 +8,9 @@ class SpriteSheet {
         int spriteCount;
         int currentSprite;
 
+        int width;
+        int height;
+
         SDL_Rect *frames;
         SDL_Texture *spritesheet;
         SDL_Window *window;
@@ -22,10 +25,12 @@ class SpriteSheet {
         );
 
         void drawSprite(int x, int y, int scale);
-        bool nextSprite();
+        bool nextSprite(bool);
         bool setCurrent(int);
 
         int getSpriteCount();
+        int getWidth();
+        int getHeight();
 };
 
 #endif

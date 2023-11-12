@@ -4,11 +4,14 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include "onion.hpp"
 
 #include <SDL_syswm.h>
 #include <fileapi.h>
 #include <windows.h>
+
+#include "spritesheet/spritesheet.hpp"
 
 #define MAKE_TRANSPARENT 1
 
@@ -33,16 +36,21 @@ bool MakeWindowTransparent(SDL_Window* window, COLORREF colorKey) {
 
 /*  Initializes all SDL systems and data structures we need to start with.
     Returns: 0 on success. -1 on error. */
-int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
+int InitSDL(SDL_Window **window, SDL_Renderer **renderer, Mix_Music **music) {
     int success = 0;
 
     // Initialize all subsystems we need.
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         printf("Error initializing SDL: %s", SDL_GetError());
         success = -1;
     }
     if (!IMG_Init(IMG_INIT_PNG)) {
         printf("Error initializing image library: %s", SDL_GetError());
+        success = -1;
+    }
+    //Initialize SDL_mixer
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 ) {
+        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
         success = -1;
     }
 
@@ -73,6 +81,13 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
         if (MAKE_TRANSPARENT) {
             MakeWindowTransparent(*window, RGB(255, 255, 255));
         }
+
+        //Load music
+        *music = Mix_LoadMUS("sounds/music.mp3");
+        if(*music == NULL) {
+            printf("Error: %s\n", Mix_GetError());
+            success = -1;
+        }
     }
 
     return success;
@@ -83,13 +98,14 @@ int main(int argc, char *argv[])
     // Initialize and create SDL data structures.
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
-    if (InitSDL(&window, &renderer) == -1) {
+    Mix_Music *music = NULL;
+    if (InitSDL(&window, &renderer, &music) == -1) {
         return EXIT_FAILURE;
     }
     SDL_GetWindowSize(window, &screenWidth, &screenHeight);
     srand((unsigned) time(0));
+    printf("Screen size: (%d, %d)\n", screenWidth, screenHeight);
 
-    Seed::initializeTextures(window, renderer);
     Onion *onion = new Onion(window, renderer);
 
     const int targetFPS = 60;
@@ -98,7 +114,11 @@ int main(int argc, char *argv[])
 
     int frames = 0;
     Uint32 startTime = SDL_GetTicks();
-     // Enter game loop.
+
+    // Start the music.
+    Mix_PlayMusic(music, -1);
+
+    // Enter game loop.
     SDL_Event e;
     SDL_bool quit = SDL_FALSE;
     while (!quit) {
@@ -111,6 +131,10 @@ int main(int argc, char *argv[])
             else if (e.type == SDL_MOUSEBUTTONDOWN)
             {
                 onion->launchSeed();
+            }
+            else if (e.type == SDL_KEYDOWN)
+            {
+                // onion->doFrame();
             }
         }
 
@@ -137,8 +161,11 @@ int main(int argc, char *argv[])
             startTime = currentTime;
         }
     }
+    Mix_PauseMusic();
 
+    Mix_FreeMusic(music);
     SDL_DestroyWindow(window);
+    Mix_Quit();
     SDL_Quit();
     return 0;
 }

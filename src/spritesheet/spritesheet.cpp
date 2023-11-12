@@ -33,6 +33,10 @@ static SDL_Texture *loadTexture(SDL_Window *window, SDL_Renderer *renderer, cons
     return texture;
 }
 
+/*
+    Assumes that json data matches up with image data. Undefined behavior if 
+    not. Also assumes every frame has the same dimensions.
+*/
 SpriteSheet::SpriteSheet(
     SDL_Window *window,
     SDL_Renderer *renderer,
@@ -73,6 +77,9 @@ SpriteSheet::SpriteSheet(
         i++;
     }
 
+    width = frames[0].w;
+    height = frames[0].h;
+
     spritesheet = loadTexture(window, renderer, imgPath);
 
     file.close();
@@ -90,18 +97,22 @@ void SpriteSheet::drawSprite(int x, int y, int scale)
     Increments to the next frame and returns true if succeeded. Returns false
     if at last frame.
 */
-bool SpriteSheet::nextSprite() 
+bool SpriteSheet::nextSprite(bool reset) 
 { 
     bool success = currentSprite < (spriteCount - 1);
     if (success) {
         currentSprite++;
+    } 
+    else if (reset) {
+        currentSprite = 0;
+        success = true;
     }
     return success;
 }
 
 bool SpriteSheet::setCurrent(int frame)
 {
-    if (frame < spriteCount) {
+    if (frame >= 0 && frame < spriteCount) {
         currentSprite = frame;
         return true;
     }
@@ -110,3 +121,5 @@ bool SpriteSheet::setCurrent(int frame)
 }
 
 int SpriteSheet::getSpriteCount() { return spriteCount; }
+int SpriteSheet::getWidth() { return width; }
+int SpriteSheet::getHeight() { return height; }
