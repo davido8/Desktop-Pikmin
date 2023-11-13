@@ -9,7 +9,7 @@
 #include "seed.hpp"
 #include <assert.h>
 
-#include "spritesheet/spritesheet.hpp"
+#include "spritesheet.hpp"
 
 extern Uint64 tick;
 

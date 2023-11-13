@@ -9,9 +9,9 @@ SDL2_LIBS=-lmingw32 -lSDL2main -lSDL2_image -lSDL2 -lSDL2_mixer
 ONION=build/onion.exe
 
 SRC_DIRS=src/onion src/pikmin src/spritesheet
-BUILD_DIRS=build\onion build\pikmin build\spritesheet
+BUILD_DIRS=build
 
-ONION_OBJ := build/onion/onion.o build/onion/main.o build/onion/seed.o build/spritesheet/spritesheet.o build/pikmin/pikmin.o
+ONION_OBJ := build/main.o build/onion.o build/pikmin.o build/seed.o build/spritesheet.o
 
 all: $(ONION)
 
