@@ -174,7 +174,6 @@ void Onion::updateSeeds()
         } 
         it++; 
     } 
-  
 }
 
 void Onion::doFrame()

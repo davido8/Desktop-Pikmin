@@ -53,7 +53,7 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
         auto Width = DM.w;
         auto Height = DM.h;
 
-        Uint32 wflags = SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_BORDERLESS;
+        Uint32 wflags = SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_BORDERLESS | SDL_WINDOW_SKIP_TASKBAR;
         *window = SDL_CreateWindow("Pikmin",
                                     -5000, -5000,
                                     Width, Height, wflags);
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
         // Update the frame rate every second
         if (elapsedTime >= 1000) {
             float fps = frames / (elapsedTime / 1000.0f);
-            std::cout << "FPS: " << fps << std::endl;
+            // std::cout << "FPS: " << fps << std::endl;
 
             // Reset counters
             frames = 0;

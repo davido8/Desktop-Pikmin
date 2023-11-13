@@ -56,11 +56,15 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer, Mix_Music **music) {
 
     if (success == 0) {
         // Create a window.
+        SDL_DisplayMode DM;
+        SDL_GetCurrentDisplayMode(0, &DM);
+        auto Width = DM.w;
+        auto Height = DM.h;
 
-        Uint32 wflags = SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_BORDERLESS;// | SDL_WINDOW_FULLSCREEN_DESKTOP;
+        Uint32 wflags = SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_BORDERLESS | SDL_WINDOW_SKIP_TASKBAR;// | SDL_WINDOW_FULLSCREEN_DESKTOP;
         *window = SDL_CreateWindow("Onion",
-                                    -1000, -1000,
-                                    1000, 1000, wflags);
+                                    -5000, -5000,
+                                    Width, Height, wflags);
         if (!*window) {
             printf("Error opening window: %s", SDL_GetError());
             success = -1;
