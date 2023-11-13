@@ -58,41 +58,7 @@ Onion::Onion(SDL_Window *window, SDL_Renderer *renderer)
 
 void Onion::createPikmin(int x, int y)
 {
-    char buffer[100] = {0};  // Allocate a buffer to store the formatted string
 
-    // Format the string and store it in the buffer
-    sprintf(
-        buffer, 
-        "%s %d %d", 
-        "C:\\Users\\david\\Projects\\PikminVirus\\build\\pikmin.exe",
-        x, 
-        y
-    );
-
-    STARTUPINFO si;
-    PROCESS_INFORMATION pi;
-
-    ZeroMemory( &si, sizeof(si) );
-    si.cb = sizeof(si);
-    ZeroMemory( &pi, sizeof(pi) );
-
-    // Start the child process. 
-    if(!CreateProcess(
-        NULL,           // No module name (use command line)
-        buffer,        // Command line
-        NULL,           // Process handle not inheritable
-        NULL,           // Thread handle not inheritable
-        FALSE,          // Set handle inheritance to FALSE
-        0,              // No creation flags
-        NULL,           // Use parent's environment block
-        NULL,           // Use parent's starting directory 
-        &si,            // Pointer to STARTUPINFO structure
-        &pi)            // Pointer to PROCESS_INFORMATION structure
-    ) 
-    {
-        printf( "CreateProcess failed (%ld).\n", GetLastError() );
-        return;
-    } 
 }
 
 /* Creates a new seed in the Onion and launches it. Must be landed. */
