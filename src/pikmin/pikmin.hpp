@@ -33,6 +33,7 @@ class Pikmin
         SDL_Renderer *renderer;
         SpriteSheet *sprites;
 
+        enum PikminState chooseAction();
         void selectAction();
         void nappyTime();
         void handleWalking();

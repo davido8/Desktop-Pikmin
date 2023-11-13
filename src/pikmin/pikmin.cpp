@@ -30,8 +30,21 @@ Pikmin::Pikmin(SDL_Window *window, SDL_Renderer *renderer, int x, int y)
     state = Idle;
     speed = 10;
 
+    sprites->setCurrent(Down*3);
+
     this->window = window;
     this->renderer = renderer;
+}
+
+enum PikminState Pikmin::chooseAction()
+{
+//static_cast<PikminState>(rand() % Count);
+    int lucky = rand() % 100;
+    if (lucky < 20) {
+        return Resting;
+    }
+
+    return Meander;
 }
 
 void Pikmin::selectAction() 
@@ -40,7 +53,7 @@ void Pikmin::selectAction()
     sprites->drawSprite(x, y, scale);
 
     // Randomly decide next action.
-    enum PikminState state = static_cast<PikminState>(rand() % Count);
+    enum PikminState state = chooseAction();
     switch (state) 
     {
         case Idle:
@@ -89,10 +102,10 @@ void Pikmin::handleWalking()
     sprites->drawSprite(x, y, scale);
 
     // Stop if at border.
-    bool pastTop = y < 0;
-    bool pastBottom = y + h >= screenHeight;
-    bool pastLeft = x < 0;
-    bool pastRight = x + w >= screenWidth;
+    bool pastTop = y < 0 && direction == Up;
+    bool pastBottom = y + h >= screenHeight && direction == Down;
+    bool pastLeft = x < 0 && direction == Left;
+    bool pastRight = x + w >= screenWidth && direction == Right;
     if (pastTop || pastBottom || pastLeft || pastRight) {
         state = Idle;
         return;

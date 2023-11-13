@@ -56,11 +56,11 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer, Mix_Music **music) {
 
     if (success == 0) {
         // Create a window.
-        Uint32 wflags = SDL_WINDOW_ALWAYS_ON_TOP;
-        wflags = MAKE_TRANSPARENT ? wflags | SDL_WINDOW_FULLSCREEN_DESKTOP : wflags;
+
+        Uint32 wflags = SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_BORDERLESS;// | SDL_WINDOW_FULLSCREEN_DESKTOP;
         *window = SDL_CreateWindow("Onion",
-                                    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                    1920, 1080, wflags);
+                                    -1000, -1000,
+                                    1000, 1000, wflags);
         if (!*window) {
             printf("Error opening window: %s", SDL_GetError());
             success = -1;
@@ -81,6 +81,8 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer, Mix_Music **music) {
         if (MAKE_TRANSPARENT) {
             MakeWindowTransparent(*window, RGB(255, 255, 255));
         }
+
+        SDL_SetWindowPosition(*window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
         //Load music
         *music = Mix_LoadMUS("sounds/music.mp3");
