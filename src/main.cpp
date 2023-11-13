@@ -6,6 +6,7 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include "onion.hpp"
+#include "sounds.hpp"
 
 #include <SDL_syswm.h>
 #include <fileapi.h>
@@ -99,6 +100,22 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer, Mix_Music **music) {
     return success;
 }
 
+SoundEffects *loadSounds() 
+{
+    bool success = true;
+    SoundEffects *sounds = new SoundEffects();
+    success &= sounds->addSound(SeedLanding, "sounds/seed_landing.mp3");
+    success &= sounds->addSound(SeedPlucked, "sounds/pluck.mp3");
+    success &= sounds->addSound(PikminPikmin, "sounds/pikmin.mp3");
+
+    if (!success) {
+        printf("Error: Could not load sounds.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return sounds;
+}
+
 int main(int argc, char *argv[])
 {
     // Initialize and create SDL data structures.
@@ -112,7 +129,10 @@ int main(int argc, char *argv[])
     srand((unsigned) time(0));
     printf("Screen size: (%d, %d)\n", screenWidth, screenHeight);
 
-    Onion *onion = new Onion(window, renderer);
+    // Initialize sound effects.
+    SoundEffects *sounds = loadSounds();
+
+    Onion *onion = new Onion(window, renderer, sounds);
 
     const int targetFPS = 60;
     const Uint32 frameDelay = 1000 / targetFPS;

@@ -4,6 +4,7 @@
 
 #include <list>
 #include "spritesheet.hpp"
+#include "sounds.hpp"
 
 constexpr const char *onionIMG = "sprites/onion.png";
 constexpr const char *seedIMG = "sprites/seed.png";
@@ -36,6 +37,8 @@ class Onion
         SpriteSheet *sprites;
         SpriteSheet *seedSprites;
 
+        SoundEffects *soundBoard;
+
         void updatePosition();
         void extendLegs();
         void updateSeeds();
@@ -45,7 +48,7 @@ class Onion
         void clearSeeds();
 
     public:
-        Onion(SDL_Window *window, SDL_Renderer *renderer);
+        Onion(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBoard);
         
         void launchSeed();
         void doFrame();

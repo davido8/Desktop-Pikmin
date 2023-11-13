@@ -5,6 +5,7 @@
 #include <SDL_image.h>
 
 #include "spritesheet.hpp"
+#include "sounds.hpp"
 
 enum Direction {
     Up, Down, Left, Right, DCount
@@ -30,6 +31,7 @@ class Pikmin
         enum Direction direction;       
 
         SpriteSheet *sprites;
+        SoundEffects *soundBoard;
 
         enum PikminState chooseAction();
         void selectAction();
@@ -37,7 +39,7 @@ class Pikmin
         void handleWalking();
 
     public:
-        Pikmin(SDL_Window *window, SDL_Renderer *renderer, int x, int y);
+        Pikmin(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBoard, int x, int y);
 
         void doFrame();
 };

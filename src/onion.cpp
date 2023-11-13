@@ -8,6 +8,7 @@
 #include "onion.hpp"
 #include "seed.hpp"
 #include "pikmin.hpp"
+#include "sounds.hpp"
 #include <assert.h>
 
 #include <windows.h>
@@ -29,7 +30,7 @@ Uint64 tick;
 /*  Initializes data structures for the Onion. This includes the Onion struct
     itself, seeds array, designates a landing spot for the onion, size, and
     loads the textures for both the onion and its seeds. */
-Onion::Onion(SDL_Window *window, SDL_Renderer *renderer)
+Onion::Onion(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBoard)
 {
     // Load the sprite sheet containing all frames of Onion.
     sprites = new SpriteSheet(window, renderer, onionImg, onionJson);
@@ -43,6 +44,7 @@ Onion::Onion(SDL_Window *window, SDL_Renderer *renderer)
     // Store for drawing later.
     this->window = window;
     this->renderer = renderer;
+    this->soundBoard = soundBoard;
 
     // Designate a landing spot.
     finalX = rand() % (screenWidth - w);
@@ -59,7 +61,8 @@ Onion::Onion(SDL_Window *window, SDL_Renderer *renderer)
 
 void Onion::createPikmin(int x, int y)
 {
-    pikmins.push_back(new Pikmin(window, renderer, x, y));
+    soundBoard->playSound(SeedPlucked);
+    pikmins.push_back(new Pikmin(window, renderer, soundBoard, x, y));
 }
 
 /* Creates a new seed in the Onion and launches it. Must be landed. */
@@ -67,7 +70,7 @@ void Onion::launchSeed()
 {
     if (state == Landed)
     {
-        seeds.push_back(new Seed(this, seedSprites));
+        seeds.push_back(new Seed(this, seedSprites, soundBoard));
         std::cout << seeds.size() << " seeds in onion\n";
     }
 }

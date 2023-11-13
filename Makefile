@@ -11,7 +11,7 @@ ONION=build/onion.exe
 SRC_DIRS=src/onion src/pikmin src/spritesheet
 BUILD_DIRS=build
 
-ONION_OBJ := build/main.o build/onion.o build/pikmin.o build/seed.o build/spritesheet.o
+ONION_OBJ := build/main.o build/onion.o build/pikmin.o build/seed.o build/spritesheet.o build/sounds.o
 
 all: $(ONION)
 
