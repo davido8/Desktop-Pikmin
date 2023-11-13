@@ -11,7 +11,7 @@
 #include <fileapi.h>
 #include <windows.h>
 
-#include "spritesheet/spritesheet.hpp"
+#include "spritesheet.hpp"
 
 #define MAKE_TRANSPARENT 1
 
@@ -71,7 +71,7 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer, Mix_Music **music) {
         }
 
         // Attach a renderer to the window.
-        Uint32 rflags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+        Uint32 rflags = SDL_RENDERER_ACCELERATED;
         *renderer = SDL_CreateRenderer(*window, -1, rflags);
         if (!*renderer) {
             printf("Error opening renderer: %s", SDL_GetError());
@@ -79,11 +79,11 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer, Mix_Music **music) {
         }
 
         SDL_SetRenderDrawBlendMode(*renderer, SDL_BLENDMODE_NONE);
-        SDL_SetRenderDrawColor(*renderer, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(*renderer, 255, 255, 254, 255);
 
         // All parts of window not filled with a color will be transparent.
         if (MAKE_TRANSPARENT) {
-            MakeWindowTransparent(*window, RGB(255, 255, 255));
+            MakeWindowTransparent(*window, RGB(255, 255, 254));
         }
 
         SDL_SetWindowPosition(*window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);

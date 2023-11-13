@@ -7,11 +7,12 @@
 #include <SDL_assert.h>
 #include "onion.hpp"
 #include "seed.hpp"
+#include "pikmin.hpp"
 #include <assert.h>
 
 #include <windows.h>
 
-#include "spritesheet/spritesheet.hpp"
+#include "spritesheet.hpp"
 
 const char *onionImg = "sprites/onion_sheet.png";
 const char *onionJson = "sprites/onion_data.json";
@@ -58,7 +59,7 @@ Onion::Onion(SDL_Window *window, SDL_Renderer *renderer)
 
 void Onion::createPikmin(int x, int y)
 {
-
+    pikmins.push_back(new Pikmin(window, renderer, x, y));
 }
 
 /* Creates a new seed in the Onion and launches it. Must be landed. */
@@ -118,9 +119,6 @@ void Onion::extendLegs()
 
 void Onion::updateSeeds()
 {
-    // Draw onion to the screen.
-    sprites->drawSprite(x, y, scale);
-
     // Advance the seed's frame in here to make sure it doesn't happen once
     // per seed.
     if (tick % 6 == 0) {
@@ -142,6 +140,13 @@ void Onion::updateSeeds()
     } 
 }
 
+void Onion::updatePikmin()
+{
+    for (Pikmin *pikmin: pikmins) {
+        pikmin->doFrame();
+    }
+}
+
 void Onion::doFrame()
 {
     SDL_RenderClear(renderer);
@@ -155,7 +160,9 @@ void Onion::doFrame()
             extendLegs();
             break;
         case Landed:
+            sprites->drawSprite(x, y, scale);
             updateSeeds();
+            updatePikmin();
             break;
         default:
             exit(EXIT_FAILURE);

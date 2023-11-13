@@ -3,13 +3,14 @@
 #define ONION_HPP
 
 #include <list>
-#include "spritesheet/spritesheet.hpp"
+#include "spritesheet.hpp"
 
 constexpr const char *onionIMG = "sprites/onion.png";
 constexpr const char *seedIMG = "sprites/seed.png";
 
 class Onion;
 class Seed;
+class Pikmin;
 
 enum OnionState {
     Launching, Unfolding, Landed
@@ -26,16 +27,19 @@ class Onion
         enum OnionState state;
 
         int noSeeds;                /* Number of seeds currently in the onion. */
-        std::list<Seed *> seeds;  /* Current seeds in onion. */
+        std::list<Seed *> seeds;    /* Current seeds in onion. */
+        std::list<Pikmin *> pikmins;
         
         SDL_Window *window;
         SDL_Renderer *renderer;
+
         SpriteSheet *sprites;
         SpriteSheet *seedSprites;
 
         void updatePosition();
         void extendLegs();
         void updateSeeds();
+        void updatePikmin();
         void createPikmin(int x, int y);
 
         void clearSeeds();

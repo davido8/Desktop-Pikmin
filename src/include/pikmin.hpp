@@ -4,7 +4,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "spritesheet/spritesheet.hpp"
+#include "spritesheet.hpp"
 
 enum Direction {
     Up, Down, Left, Right, DCount
@@ -29,8 +29,6 @@ class Pikmin
         int baseFrame;
         enum Direction direction;       
 
-        SDL_Window *window;
-        SDL_Renderer *renderer;
         SpriteSheet *sprites;
 
         enum PikminState chooseAction();

@@ -19,26 +19,27 @@ Pikmin::Pikmin(SDL_Window *window, SDL_Renderer *renderer, int x, int y)
 {
     sprites = new SpriteSheet(window, renderer, pikminImg, pikminJson);
 
+    // Start at the position given of the seed.
     this->x = x;
     this->y = y;
 
+    // Scale appropriately.
     scale = 2;
 
+    // Maintain widht/height to avoid going off screen.
     w = sprites->getWidth()*scale;
     h = sprites->getHeight()*scale;
 
+    // Be ready to receive a task.
     state = Idle;
     speed = 10;
 
+    // Face forward initially.
     sprites->setCurrent(Down*3);
-
-    this->window = window;
-    this->renderer = renderer;
 }
 
 enum PikminState Pikmin::chooseAction()
 {
-//static_cast<PikminState>(rand() % Count);
     int lucky = rand() % 100;
     if (lucky < 20) {
         return Resting;
@@ -149,7 +150,6 @@ void Pikmin::handleWalking()
 
 void Pikmin::doFrame() 
 {
-    SDL_RenderClear(renderer);
     switch (state) 
     {
         case Idle:
@@ -164,5 +164,4 @@ void Pikmin::doFrame()
         default:
             exit(EXIT_FAILURE);
     }
-    SDL_RenderPresent(renderer);
 }
