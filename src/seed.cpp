@@ -9,7 +9,8 @@
 #include "seed.hpp"
 #include <assert.h>
 
-#include "spritesheet/spritesheet.hpp"
+#include "spritesheet.hpp"
+#include "sounds.hpp"
 
 extern Uint64 tick;
 
@@ -17,7 +18,7 @@ extern Uint64 tick;
     Seed(): Constructor for the Seed class that places a seed into the flying
             state and chooses a final spot it will fly to.
 */
-Seed::Seed(Onion *onion, SpriteSheet *sheet)
+Seed::Seed(Onion *onion, SpriteSheet *sheet, SoundEffects *soundBoard)
 {
     state = Flying;
 
@@ -37,6 +38,7 @@ Seed::Seed(Onion *onion, SpriteSheet *sheet)
 
     sprites = sheet;
     this->onion = onion;
+    this->soundBoard = soundBoard;
 }
 
 void Seed::updatePosition()
@@ -55,12 +57,15 @@ void Seed::updatePosition()
     }
 }
 
+/*
+    Landed! Determine how long to wait before plucking.
+*/
 void Seed::setBloomTime()
 {
     int delay = ((rand() % 10) + 5);    /* 5 + 0-10 seconds. */
-    std::cout << "Going to take "<< delay << " seconds to bloom.\n";
     delay *= 1000;                  /* Convert ticks to seconds. */
     bloomTime = SDL_GetTicks64() + delay;
+    soundBoard->playSound(SeedLanding);
     state = Blooming;
 }
 
@@ -68,8 +73,6 @@ void Seed::waitToBloom()
 {
     if (bloomTime <= SDL_GetTicks64())
     {
-        /* TODO: Create Pikmin. */
-        std::cout << "Seed bloomed!\n";
         state = Bloomed;
     }
 }

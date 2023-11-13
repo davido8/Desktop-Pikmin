@@ -44,8 +44,6 @@ SpriteSheet::SpriteSheet(
     const char *jsonPath
 ) 
 {
-    printf("Going to load in spritesheet %s\n", imgPath);
-
     this->window = window;
     this->renderer = renderer;
 
@@ -61,8 +59,6 @@ SpriteSheet::SpriteSheet(
     // Parse the JSON data
     json jsonData;
     file >> jsonData;
-
-    std::cout << "Frames: " << jsonData["frames"].size() << " \n";
 
     currentSprite = 0;
     spriteCount = jsonData["frames"].size();

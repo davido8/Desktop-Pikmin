@@ -7,11 +7,13 @@
 #include <SDL_assert.h>
 #include "onion.hpp"
 #include "seed.hpp"
+#include "pikmin.hpp"
+#include "sounds.hpp"
 #include <assert.h>
 
 #include <windows.h>
 
-#include "spritesheet/spritesheet.hpp"
+#include "spritesheet.hpp"
 
 const char *onionImg = "sprites/onion_sheet.png";
 const char *onionJson = "sprites/onion_data.json";
@@ -28,7 +30,7 @@ Uint64 tick;
 /*  Initializes data structures for the Onion. This includes the Onion struct
     itself, seeds array, designates a landing spot for the onion, size, and
     loads the textures for both the onion and its seeds. */
-Onion::Onion(SDL_Window *window, SDL_Renderer *renderer)
+Onion::Onion(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBoard)
 {
     // Load the sprite sheet containing all frames of Onion.
     sprites = new SpriteSheet(window, renderer, onionImg, onionJson);
@@ -42,6 +44,7 @@ Onion::Onion(SDL_Window *window, SDL_Renderer *renderer)
     // Store for drawing later.
     this->window = window;
     this->renderer = renderer;
+    this->soundBoard = soundBoard;
 
     // Designate a landing spot.
     finalX = rand() % (screenWidth - w);
@@ -58,41 +61,8 @@ Onion::Onion(SDL_Window *window, SDL_Renderer *renderer)
 
 void Onion::createPikmin(int x, int y)
 {
-    char buffer[100] = {0};  // Allocate a buffer to store the formatted string
-
-    // Format the string and store it in the buffer
-    sprintf(
-        buffer, 
-        "%s %d %d", 
-        "C:\\Users\\david\\Projects\\PikminVirus\\build\\pikmin.exe",
-        x, 
-        y
-    );
-
-    STARTUPINFO si;
-    PROCESS_INFORMATION pi;
-
-    ZeroMemory( &si, sizeof(si) );
-    si.cb = sizeof(si);
-    ZeroMemory( &pi, sizeof(pi) );
-
-    // Start the child process. 
-    if(!CreateProcess(
-        NULL,           // No module name (use command line)
-        buffer,        // Command line
-        NULL,           // Process handle not inheritable
-        NULL,           // Thread handle not inheritable
-        FALSE,          // Set handle inheritance to FALSE
-        0,              // No creation flags
-        NULL,           // Use parent's environment block
-        NULL,           // Use parent's starting directory 
-        &si,            // Pointer to STARTUPINFO structure
-        &pi)            // Pointer to PROCESS_INFORMATION structure
-    ) 
-    {
-        printf( "CreateProcess failed (%ld).\n", GetLastError() );
-        return;
-    } 
+    soundBoard->playSound(SeedPlucked);
+    pikmins.push_back(new Pikmin(window, renderer, soundBoard, x, y));
 }
 
 /* Creates a new seed in the Onion and launches it. Must be landed. */
@@ -100,7 +70,8 @@ void Onion::launchSeed()
 {
     if (state == Landed)
     {
-        seeds.push_back(new Seed(this, seedSprites));
+        soundBoard->playSound(OnionSpit);
+        seeds.push_back(new Seed(this, seedSprites, soundBoard));
         std::cout << seeds.size() << " seeds in onion\n";
     }
 }
@@ -152,9 +123,6 @@ void Onion::extendLegs()
 
 void Onion::updateSeeds()
 {
-    // Draw onion to the screen.
-    sprites->drawSprite(x, y, scale);
-
     // Advance the seed's frame in here to make sure it doesn't happen once
     // per seed.
     if (tick % 6 == 0) {
@@ -176,6 +144,13 @@ void Onion::updateSeeds()
     } 
 }
 
+void Onion::updatePikmin()
+{
+    for (Pikmin *pikmin: pikmins) {
+        pikmin->doFrame();
+    }
+}
+
 void Onion::doFrame()
 {
     SDL_RenderClear(renderer);
@@ -189,7 +164,9 @@ void Onion::doFrame()
             extendLegs();
             break;
         case Landed:
+            sprites->drawSprite(x, y, scale);
             updateSeeds();
+            updatePikmin();
             break;
         default:
             exit(EXIT_FAILURE);

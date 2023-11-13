@@ -3,6 +3,7 @@
 
 #include "SDL.h"
 #include "onion.hpp"
+#include "sounds.hpp"
 
 enum SeedState {
     Flying, Blooming, Grounded, Bloomed, Head
@@ -24,13 +25,15 @@ class Seed {
         SDL_Window *window;
         SDL_Renderer *renderer;
         SpriteSheet *sprites;
+        SoundEffects *soundBoard;
+
 
         void updatePosition();
         void setBloomTime();
         void waitToBloom();
 
     public:
-        Seed(Onion *onion, SpriteSheet *sheet);
+        Seed(Onion *onion, SpriteSheet *sheet, SoundEffects *soundBoard);
         void doFrame();
         enum SeedState getState();
         int getX();

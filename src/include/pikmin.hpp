@@ -4,7 +4,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "spritesheet/spritesheet.hpp"
+#include "spritesheet.hpp"
+#include "sounds.hpp"
 
 enum Direction {
     Up, Down, Left, Right, DCount
@@ -29,9 +30,8 @@ class Pikmin
         int baseFrame;
         enum Direction direction;       
 
-        SDL_Window *window;
-        SDL_Renderer *renderer;
         SpriteSheet *sprites;
+        SoundEffects *soundBoard;
 
         enum PikminState chooseAction();
         void selectAction();
@@ -39,7 +39,7 @@ class Pikmin
         void handleWalking();
 
     public:
-        Pikmin(SDL_Window *window, SDL_Renderer *renderer, int x, int y);
+        Pikmin(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBoard, int x, int y);
 
         void doFrame();
 };

@@ -4,11 +4,15 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
-#include "pikmin.hpp"
+#include <SDL_mixer.h>
+#include "onion.hpp"
+#include "sounds.hpp"
 
 #include <SDL_syswm.h>
 #include <fileapi.h>
 #include <windows.h>
+
+#include "spritesheet.hpp"
 
 #define MAKE_TRANSPARENT 1
 
@@ -33,7 +37,7 @@ bool MakeWindowTransparent(SDL_Window* window, COLORREF colorKey) {
 
 /*  Initializes all SDL systems and data structures we need to start with.
     Returns: 0 on success. -1 on error. */
-int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
+int InitSDL(SDL_Window **window, SDL_Renderer **renderer, Mix_Music **music) {
     int success = 0;
 
     // Initialize all subsystems we need.
@@ -45,6 +49,11 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
         printf("Error initializing image library: %s", SDL_GetError());
         success = -1;
     }
+    //Initialize SDL_mixer
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 ) {
+        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+        success = -1;
+    }
 
     if (success == 0) {
         // Create a window.
@@ -53,8 +62,8 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
         auto Width = DM.w;
         auto Height = DM.h;
 
-        Uint32 wflags = SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_BORDERLESS | SDL_WINDOW_SKIP_TASKBAR;
-        *window = SDL_CreateWindow("Pikmin",
+        Uint32 wflags = SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_BORDERLESS | SDL_WINDOW_SKIP_TASKBAR;// | SDL_WINDOW_FULLSCREEN_DESKTOP;
+        *window = SDL_CreateWindow("Onion",
                                     -5000, -5000,
                                     Width, Height, wflags);
         if (!*window) {
@@ -63,7 +72,7 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
         }
 
         // Attach a renderer to the window.
-        Uint32 rflags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+        Uint32 rflags = SDL_RENDERER_ACCELERATED;
         *renderer = SDL_CreateRenderer(*window, -1, rflags);
         if (!*renderer) {
             printf("Error opening renderer: %s", SDL_GetError());
@@ -79,9 +88,34 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer) {
         }
 
         SDL_SetWindowPosition(*window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+        //Load music
+        *music = Mix_LoadMUS("sounds/music.mp3");
+        if(*music == NULL) {
+            printf("Error: %s\n", Mix_GetError());
+            success = -1;
+        }
     }
 
     return success;
+}
+
+SoundEffects *loadSounds() 
+{
+    bool success = true;
+    SoundEffects *sounds = new SoundEffects();
+    success &= sounds->addSound(OnionSpit, "sounds/spit.mp3");
+    success &= sounds->addSound(SeedLanding, "sounds/seed_landing.mp3");
+    success &= sounds->addSound(SeedPlucked, "sounds/pluck.mp3");
+    success &= sounds->addSound(PikminPikmin, "sounds/pikmin.mp3");
+    success &= sounds->addSound(PikminTittai, "sounds/tittai.mp3");
+
+    if (!success) {
+        printf("Error: Could not load sounds.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return sounds;
 }
 
 int main(int argc, char *argv[])
@@ -89,29 +123,30 @@ int main(int argc, char *argv[])
     // Initialize and create SDL data structures.
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
-    if (InitSDL(&window, &renderer) == -1) {
+    Mix_Music *music = NULL;
+    if (InitSDL(&window, &renderer, &music) == -1) {
         return EXIT_FAILURE;
     }
     SDL_GetWindowSize(window, &screenWidth, &screenHeight);
     srand((unsigned) time(0));
+    printf("Screen size: (%d, %d)\n", screenWidth, screenHeight);
 
-    int x = 500;
-    int y = 500;
-    // Extract starting coordinates if supplied.
-    if (argc == 3) {
-        x = atoi(argv[1]);
-        y = atoi(argv[2]);
-    }
+    // Initialize sound effects.
+    SoundEffects *sounds = loadSounds();
 
-    Pikmin *pikmin = new Pikmin(window, renderer, x, y);
+    Onion *onion = new Onion(window, renderer, sounds);
 
-    const int targetFPS = 60;
+    const int targetFPS = 30;
     const Uint32 frameDelay = 1000 / targetFPS;
     Uint32 frameStart, frameTime;
 
     int frames = 0;
     Uint32 startTime = SDL_GetTicks();
-     // Enter game loop.
+
+    // Start the music.
+    Mix_PlayMusic(music, -1);
+
+    // Enter game loop.
     SDL_Event e;
     SDL_bool quit = SDL_FALSE;
     while (!quit) {
@@ -120,12 +155,17 @@ int main(int argc, char *argv[])
             if (e.type == SDL_QUIT) {
                 quit = SDL_TRUE;
             }
+            else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                for (int i = 0; i < 1000; i++) {
+                    onion->launchSeed();
+                }
+            }
             else if (e.type == SDL_KEYDOWN) {
-                // pikmin->doFrame();
+                // onion->doFrame();
             }
         }
 
-        pikmin->doFrame();
+        onion->doFrame();
 
         // Add delay to meet target frame rate.
         frameTime = SDL_GetTicks64() - frameStart;
@@ -148,8 +188,11 @@ int main(int argc, char *argv[])
             startTime = currentTime;
         }
     }
+    Mix_PauseMusic();
 
+    Mix_FreeMusic(music);
     SDL_DestroyWindow(window);
+    Mix_Quit();
     SDL_Quit();
     return 0;
 }
