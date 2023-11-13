@@ -104,9 +104,11 @@ SoundEffects *loadSounds()
 {
     bool success = true;
     SoundEffects *sounds = new SoundEffects();
+    success &= sounds->addSound(OnionSpit, "sounds/spit.mp3");
     success &= sounds->addSound(SeedLanding, "sounds/seed_landing.mp3");
     success &= sounds->addSound(SeedPlucked, "sounds/pluck.mp3");
     success &= sounds->addSound(PikminPikmin, "sounds/pikmin.mp3");
+    success &= sounds->addSound(PikminTittai, "sounds/tittai.mp3");
 
     if (!success) {
         printf("Error: Could not load sounds.\n");
@@ -134,7 +136,7 @@ int main(int argc, char *argv[])
 
     Onion *onion = new Onion(window, renderer, sounds);
 
-    const int targetFPS = 60;
+    const int targetFPS = 30;
     const Uint32 frameDelay = 1000 / targetFPS;
     Uint32 frameStart, frameTime;
 
@@ -150,16 +152,15 @@ int main(int argc, char *argv[])
     while (!quit) {
         frameStart = SDL_GetTicks64();
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) 
-            {
+            if (e.type == SDL_QUIT) {
                 quit = SDL_TRUE;
             }
-            else if (e.type == SDL_MOUSEBUTTONDOWN)
-            {
-                onion->launchSeed();
+            else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                for (int i = 0; i < 1000; i++) {
+                    onion->launchSeed();
+                }
             }
-            else if (e.type == SDL_KEYDOWN)
-            {
+            else if (e.type == SDL_KEYDOWN) {
                 // onion->doFrame();
             }
         }
@@ -180,7 +181,7 @@ int main(int argc, char *argv[])
         // Update the frame rate every second
         if (elapsedTime >= 1000) {
             float fps = frames / (elapsedTime / 1000.0f);
-            std::cout << "FPS: " << fps << std::endl;
+            // std::cout << "FPS: " << fps << std::endl;
 
             // Reset counters
             frames = 0;

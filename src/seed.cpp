@@ -63,7 +63,6 @@ void Seed::updatePosition()
 void Seed::setBloomTime()
 {
     int delay = ((rand() % 10) + 5);    /* 5 + 0-10 seconds. */
-    std::cout << "Going to take "<< delay << " seconds to bloom.\n";
     delay *= 1000;                  /* Convert ticks to seconds. */
     bloomTime = SDL_GetTicks64() + delay;
     soundBoard->playSound(SeedLanding);
@@ -74,7 +73,6 @@ void Seed::waitToBloom()
 {
     if (bloomTime <= SDL_GetTicks64())
     {
-        std::cout << "Seed bloomed!\n";
         state = Bloomed;
     }
 }

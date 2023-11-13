@@ -39,6 +39,8 @@ Pikmin::Pikmin(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBo
     sprites->setCurrent(Down*3);
 
     this->soundBoard = soundBoard;
+
+    // soundBoard->playSound(PikminTittai);
 }
 
 enum PikminState Pikmin::chooseAction()

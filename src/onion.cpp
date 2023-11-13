@@ -70,6 +70,7 @@ void Onion::launchSeed()
 {
     if (state == Landed)
     {
+        soundBoard->playSound(OnionSpit);
         seeds.push_back(new Seed(this, seedSprites, soundBoard));
         std::cout << seeds.size() << " seeds in onion\n";
     }

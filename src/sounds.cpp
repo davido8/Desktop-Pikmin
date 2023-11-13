@@ -4,7 +4,7 @@
 
 SoundEffects::SoundEffects() {}
 
-bool SoundEffects::addSound(enum Sounds sound, char *path) 
+bool SoundEffects::addSound(enum Sounds sound, const char *path) 
 {
     sounds[sound] = Mix_LoadWAV(path);
     if (sounds[sound] == NULL) {

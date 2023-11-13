@@ -5,7 +5,7 @@
 #include <SDL_mixer.h>
 
 enum Sounds {
-    SeedLanding, SeedPlucked, PikminPikmin
+    OnionSpit, SeedLanding, SeedPlucked, PikminPikmin, PikminTittai
 };
 
 class SoundEffects {
@@ -15,7 +15,7 @@ class SoundEffects {
     public:
         SoundEffects();
 
-        bool addSound(enum Sounds, char *path);
+        bool addSound(enum Sounds, const char *path);
         bool playSound(enum Sounds);
 };
 
