@@ -13,8 +13,8 @@
 extern int screenWidth;
 extern int screenHeight;
 
-const char *pikminImg = "sprites/pikmin_sheet.png";
-const char *pikminJson = "sprites/pikmin_data.json";
+const char *pikminImg =  "assets/sprites/pikmin_sheet.png";
+const char *pikminJson = "assets/sprites/pikmin_data.json";
 
 Pikmin::Pikmin(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBoard, int x, int y)
 {
