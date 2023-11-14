@@ -16,7 +16,7 @@
 
 #define MAKE_TRANSPARENT 1
 
-int screenWidth;
+int screenWidth; 
 int screenHeight;
 
 // Makes a window transparent by setting a transparency color.
@@ -90,7 +90,7 @@ int InitSDL(SDL_Window **window, SDL_Renderer **renderer, Mix_Music **music) {
         SDL_SetWindowPosition(*window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
         //Load music
-        *music = Mix_LoadMUS("sounds/music.mp3");
+        *music = Mix_LoadMUS("assets/sounds/music.mp3");
         if(*music == NULL) {
             printf("Error: %s\n", Mix_GetError());
             success = -1;
@@ -104,11 +104,11 @@ SoundEffects *loadSounds()
 {
     bool success = true;
     SoundEffects *sounds = new SoundEffects();
-    success &= sounds->addSound(OnionSpit, "sounds/spit.mp3");
-    success &= sounds->addSound(SeedLanding, "sounds/seed_landing.mp3");
-    success &= sounds->addSound(SeedPlucked, "sounds/pluck.mp3");
-    success &= sounds->addSound(PikminPikmin, "sounds/pikmin.mp3");
-    success &= sounds->addSound(PikminTittai, "sounds/tittai.mp3");
+    success &= sounds->addSound(OnionSpit,    "assets/sounds/spit.mp3");
+    success &= sounds->addSound(SeedLanding,  "assets/sounds/seed_landing.mp3");
+    success &= sounds->addSound(SeedPlucked,  "assets/sounds/pluck.mp3");
+    success &= sounds->addSound(PikminPikmin, "assets/sounds/pikmin.mp3");
+    success &= sounds->addSound(PikminTittai, "assets/sounds/tittai.mp3");
 
     if (!success) {
         printf("Error: Could not load sounds.\n");
@@ -154,9 +154,10 @@ int main(int argc, char *argv[])
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 quit = SDL_TRUE;
+                break;
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN) {
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 1; i++) {
                     onion->launchSeed();
                 }
             }

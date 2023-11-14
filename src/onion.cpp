@@ -15,11 +15,11 @@
 
 #include "spritesheet.hpp"
 
-const char *onionImg = "sprites/onion_sheet.png";
-const char *onionJson = "sprites/onion_data.json";
+const char *onionImg = "assets/sprites/onion_sheet.png";
+const char *onionJson = "assets/sprites/onion_data.json";
 
-const char *seedImg = "sprites/seed_sheet.png";
-const char *seedJson = "sprites/seed_data.json";
+const char *seedImg = "assets/sprites/seed_sheet.png";
+const char *seedJson = "assets/sprites/seed_data.json";
 
 extern int screenWidth;
 extern int screenHeight;
@@ -62,7 +62,7 @@ Onion::Onion(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBoar
 void Onion::createPikmin(int x, int y)
 {
     soundBoard->playSound(SeedPlucked);
-    pikmins.push_back(new Pikmin(window, renderer, soundBoard, x, y));
+    pikmins.push_back(new Pikmin(window, renderer, soundBoard, x, y - 55));
 }
 
 /* Creates a new seed in the Onion and launches it. Must be landed. */
