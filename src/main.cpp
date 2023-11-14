@@ -154,6 +154,7 @@ int main(int argc, char *argv[])
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 quit = SDL_TRUE;
+                break;
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN) {
                 for (int i = 0; i < 1; i++) {
