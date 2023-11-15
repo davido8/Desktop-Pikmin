@@ -3,6 +3,7 @@
 #define ONION_HPP
 
 #include <list>
+#include "sprite.hpp"
 #include "spritesheet.hpp"
 #include "sounds.hpp"
 
@@ -17,13 +18,10 @@ enum OnionState {
     Launching, Unfolding, Landed
 };
 
-class Onion 
-{
+class Onion: Sprite {
     private:
-        int x, y;                   /* (x, y) coordinate on screen. */
         int finalX, finalY;         /* (x, y) coordinate once landed. */
         int onionSpeed;
-        int w, h;                   /* Width and height of Onion. */
         int scale;
         enum OnionState state;
 
@@ -34,7 +32,6 @@ class Onion
         SDL_Window *window;
         SDL_Renderer *renderer;
 
-        SpriteSheet *sprites;
         SpriteSheet *seedSprites;
 
         SoundEffects *soundBoard;
@@ -48,15 +45,14 @@ class Onion
         void clearSeeds();
 
     public:
-        Onion(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBoard);
+        Onion(
+            SDL_Window *window, 
+            SDL_Renderer *renderer, 
+            SoundEffects *soundBoard
+        );
         
         void launchSeed();
         void doFrame();
-
-        int getX();
-        int getY();
-        int getWidth();
-        int getHeight();
 
         ~Onion();
 };

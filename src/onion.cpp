@@ -7,6 +7,7 @@
 #include <SDL_assert.h>
 #include "onion.hpp"
 #include "seed.hpp"
+#include "sprite.hpp"
 #include "pikmin.hpp"
 #include "sounds.hpp"
 #include <assert.h>
@@ -30,31 +31,34 @@ Uint64 tick;
 /*  Initializes data structures for the Onion. This includes the Onion struct
     itself, seeds array, designates a landing spot for the onion, size, and
     loads the textures for both the onion and its seeds. */
-Onion::Onion(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBoard)
+Onion::Onion(
+    SDL_Window *window, 
+    SDL_Renderer *renderer, 
+    SoundEffects *soundBoard): Sprite(window, renderer, "onion")
 {
+    this->setSprite("onion");
+
     // Load the sprite sheet containing all frames of Onion.
-    sprites = new SpriteSheet(window, renderer, onionImg, onionJson);
-    seedSprites = new SpriteSheet(window, renderer, seedImg, seedJson);
+    // seedSprites = new SpriteSheet(window, renderer, seedImg, seedJson);
 
     // TODO: Add scale.
     scale = 2;
-    w = scale*sprites->getWidth();
-    h = scale*sprites->getHeight();
 
     // Store for drawing later.
     this->window = window;
     this->renderer = renderer;
     this->soundBoard = soundBoard;
 
-    // Designate a landing spot.
-    finalX = rand() % (screenWidth - w);
-    finalY = rand() % (screenHeight - h);
-
-    x = finalX;
-    y = 0;
+    // TODO: Designate a landing spot.
+    // finalX = rand() % (screenWidth - w);
+    // finalY = rand() % (screenHeight - h);
+    finalX = rand() % (screenWidth - this->getXBounds());
+    finalY = rand() % (screenHeight - this->getYBounds());
 
     state = Launching;
     onionSpeed = 0.01*screenHeight + 1;
+
+    this->move(finalX, 0);
 
     std::cout << "Onion launching to (" << finalX << ", " << finalY << ")!\n";
 }
@@ -78,7 +82,6 @@ void Onion::launchSeed()
 
 void Onion::clearSeeds()
 {
-    /* TODO: Fix. */
     for (auto it = seeds.begin(); it != seeds.end();)
     {
         if ((*it)->getState() == Bloomed)
@@ -95,29 +98,28 @@ void Onion::clearSeeds()
 
 void Onion::updatePosition() 
 {
-    if (y >= finalY) {
+    if (this->getY() >= finalY) {
         std::cout << "Onion has landed!\n";
-        SDL_assert(x == finalX);
-        SDL_assert(y == finalY);
+        SDL_assert(this->getX() == finalX);
+        SDL_assert(this->getY() == finalY);
 
-        sprites->drawSprite(x, y, scale);
+        this->draw();
         state = Unfolding;
     }
 
     // Keep moving down screen until reach target destination.
-    sprites->drawSprite(x, y, scale);
-    y = (y + onionSpeed) > finalY ? finalY : onionSpeed + y;
+    this->draw();
+    this->move(this->getX(), (this->getY() + onionSpeed) > finalY ? finalY : onionSpeed + this->getY());
 }
 
 void Onion::extendLegs()
 {
-    bool incremented = sprites->nextSprite(false);
-
-    sprites->drawSprite(x, y, scale);
+    bool incremented = this->nextFrame(false);
+    this->draw();
 
     if (!incremented) {
         state = Landed;
-        launchSeed();
+        // launchSeed();
     }
 }
 
@@ -164,17 +166,12 @@ void Onion::doFrame()
             extendLegs();
             break;
         case Landed:
-            sprites->drawSprite(x, y, scale);
-            updateSeeds();
-            updatePikmin();
+            this->draw();
+            // updateSeeds();
+            // updatePikmin();
             break;
         default:
             exit(EXIT_FAILURE);
     }
     SDL_RenderPresent(renderer);
 }
-
-int Onion::getX() { return x; }
-int Onion::getY() { return y; }
-int Onion::getWidth() { return w; }
-int Onion::getHeight() { return h; }

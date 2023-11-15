@@ -22,10 +22,10 @@ Seed::Seed(Onion *onion, SpriteSheet *sheet, SoundEffects *soundBoard)
 {
     state = Flying;
 
-    int onionX = onion->getX();
-    int onionY = onion->getY();
-    int onionW = onion->getWidth();
-    int onionH = onion->getHeight();
+    int onionX = 0;//onion->getX();
+    int onionY = 0;//onion->getY();
+    int onionW = 0;//onion->getWidth();
+    int onionH = 0;//onion->getHeight();
 
     w = sheet->getWidth();
     h = sheet->getHeight();

@@ -1,5 +1,6 @@
 #include "pikmin.hpp"
 #include "sounds.hpp"
+#include "sprite.hpp"
 
 #include <iostream>
 #include <cstdlib>
@@ -13,8 +14,8 @@
 extern int screenWidth;
 extern int screenHeight;
 
-const char *pikminImg =  "assets/sprites/pikmin_sheet.png";
-const char *pikminJson = "assets/sprites/pikmin_data.json";
+const std::string pikminImg =  "assets/sprites/pikmin_sheet.png";
+const std::string pikminJson = "assets/sprites/pikmin_data.json";
 
 Pikmin::Pikmin(SDL_Window *window, SDL_Renderer *renderer, SoundEffects *soundBoard, int x, int y)
 {

@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-Wall
+CFLAGS=-Wall -std=c++17
 
 HEADERS=-Isrc/include/SDL2 -Isrc/include/json -Isrc/include
 SDL2_FLAG=-Lsrc/lib
@@ -17,7 +17,8 @@ ONION_OBJ := $(OBJECT_DIR)/main.o \
 			 $(OBJECT_DIR)/pikmin.o \
 			 $(OBJECT_DIR)/seed.o \
 			 $(OBJECT_DIR)/spritesheet.o \
-			 $(OBJECT_DIR)/sounds.o 
+			 $(OBJECT_DIR)/sounds.o \
+			 $(OBJECT_DIR)/sprite.o
 
 onion: build
 	./$(ONION)
@@ -39,7 +40,7 @@ release: build | $(RELEASE_DIR)
 
 # Link all the generated object files into one executable.
 $(ONION): $(ONION_OBJ)
-	$(CC) -o $@ $^ $(SDL2_FLAG) $(SDL2_LIBS) -mwindows
+	$(CC) -o $@ $^ $(SDL2_FLAG) $(SDL2_LIBS)
 
 # Compiles the .c files into .o files ready to be linked.
 $(OBJECT_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR) $(OBJECT_DIR)

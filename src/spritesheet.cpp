@@ -15,8 +15,8 @@ using json = nlohmann::json;
 /*  Loads a texture specified in path into the rendering context. It sets the
     color [BLANK] as the transparent pixel, therefore, this color should not be
     used or it will be treated as transparent. */
-static SDL_Texture *loadTexture(SDL_Window *window, SDL_Renderer *renderer, const char *path) {
-    SDL_Surface *tempSurface = IMG_Load(path);
+static SDL_Texture *loadTexture(SDL_Window *window, SDL_Renderer *renderer, const std::string path) {
+    SDL_Surface *tempSurface = IMG_Load(path.c_str());
     if (!tempSurface) {
         printf("SDL_Image Error: %s\n", IMG_GetError());
         return nullptr;
@@ -40,8 +40,8 @@ static SDL_Texture *loadTexture(SDL_Window *window, SDL_Renderer *renderer, cons
 SpriteSheet::SpriteSheet(
     SDL_Window *window,
     SDL_Renderer *renderer,
-    const char *imgPath, 
-    const char *jsonPath
+    const std::string &imgPath, 
+    const std::string &jsonPath
 ) 
 {
     this->window = window;
@@ -52,7 +52,7 @@ SpriteSheet::SpriteSheet(
 
     // Check if the file is open
     if (!file.is_open()) {
-        std::cout << "Failed to open the file!" << std::endl;
+        std::cout << "Failed to open " << jsonPath << "!" << std::endl;
         exit(EXIT_FAILURE);
     }
 

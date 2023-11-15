@@ -2,6 +2,7 @@
 #define SHEET_HPP
 
 #include "SDL.h"
+#include <string>
 
 class SpriteSheet {
     private:
@@ -20,8 +21,8 @@ class SpriteSheet {
         SpriteSheet(
             SDL_Window *window, 
             SDL_Renderer *renderer,
-            const char *imgPath, 
-            const char *jsonPath
+            const std::string &imgPath, 
+            const std::string &jsonPath
         );
 
         void drawSprite(int x, int y, int scale);
